@@ -1,0 +1,31 @@
+import os
+import fnmatch
+
+root_folder = r"C:\...\..."
+
+for dirpath, dirnames, filenames in os.walk(root_folder):
+    for filename in filenames:
+        if fnmatch.fnmatch(filename, '*output*.pdb'):
+            input_path = os.path.join(dirpath, filename)
+
+            # 新建 change_chain 文件夹
+            change_chain_folder = os.path.join(dirpath, "change_chain")
+            os.makedirs(change_chain_folder, exist_ok=True)
+
+            # 新文件名和路径
+            name_without_ext, ext = os.path.splitext(filename)
+            new_filename = name_without_ext + "_cchain" + ext
+            output_path = os.path.join(change_chain_folder, new_filename)
+
+            with open(input_path, 'r') as infile, open(output_path, 'w') as outfile:
+                lines = infile.readlines()
+
+                for idx, line in enumerate(lines):
+                    # 从第2704行开始处理（行号从1开始 → Python索引从0开始，即 idx >= 2703）
+                    if idx >= 2703:
+                        if (line.startswith("ATOM") or line.startswith("HETATM")) and len(line) >= 22:
+                            if line[21] == 'A':  # 第22列索引是21
+                                line = line[:21] + 'B' + line[22:]
+                    outfile.write(line)
+
+            print(f"✅ 处理完成: {input_path} → {output_path}")
