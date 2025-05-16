@@ -1,0 +1,22 @@
+import os
+
+# 配置路径
+input_folder = r"C:\...\..."  # 改为你的路径
+output_folder = r"C:\...\..."
+
+# 创建输出文件夹（如果不存在）
+os.makedirs(output_folder, exist_ok=True)
+
+for filename in os.listdir(input_folder):
+    if filename.endswith(".pdb"):
+        input_path = os.path.join(input_folder, filename)
+        output_path = os.path.join(output_folder, filename)
+
+        with open(input_path, 'r') as infile, open(output_path, 'w') as outfile:
+            for line in infile:
+                # 如果行不足 54 个字符，右侧补空格；否则裁剪
+                new_line = line[:54].ljust(54)
+                outfile.write(new_line + '\n')
+
+print("✅ 所有文件处理完成，已保留 PDB 格式的前 54 列。")
+
