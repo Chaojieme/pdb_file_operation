@@ -1,0 +1,28 @@
+import os
+
+# 设置要遍历的根目录
+root_folder = r"C:\...\..."
+
+for dirpath, dirnames, filenames in os.walk(root_folder):
+    parent_folder = os.path.basename(dirpath)  # 当前文件夹名
+
+    for filename in filenames:
+        if filename.endswith(".pdb"):
+            # 分离文件名和扩展名
+            name_without_ext, ext = os.path.splitext(filename)
+
+            # 删除文件名中非扩展名的点（只保留 .pdb）
+            name_cleaned = name_without_ext.replace('.', '')
+
+            # 新的文件名：<父文件夹名>_<清理后的文件名>.pdb
+            new_filename = f"{parent_folder}_{name_cleaned}.pdb"
+
+            # 构造完整路径
+            old_path = os.path.join(dirpath, filename)
+            new_path = os.path.join(dirpath, new_filename)
+
+            # 重命名文件
+            os.rename(old_path, new_path)
+            print(f"✅ 已重命名: {old_path} → {new_path}")
+
+print("🎉 所有 .pdb 文件已批量重命名完毕。")
